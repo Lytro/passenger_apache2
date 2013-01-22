@@ -45,6 +45,14 @@ template "#{node['apache']['dir']}/ports.conf" do
   notifies :restart, "service[apache2]"
 end
 
+ruby_block "reload_ruby" do
+  block do
+    node.load_attribute_by_short_filename('default', 'passenger_apache2')
+  end
+
+  action :nothing # gets triggered via notifications if another cookbook installs a ruby
+end
+
 apache_module "passenger" do
   module_path node[:passenger][:module_path]
 end
