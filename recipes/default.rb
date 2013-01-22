@@ -37,8 +37,7 @@ if node[:passenger][:manage_module_conf]
   include_recipe 'passenger_apache2::mod_rails'
 end
 
-template "#{node['apache']['dir']}/ports.conf" do
-  source "ports.conf.erb"
+cookbook_file "#{node['apache']['dir']}/ports.conf" do
   owner "root"
   group node['apache']['root_group']
   mode 00644
