@@ -51,6 +51,7 @@ ruby_block "reload_ruby" do
   end
 
   action :nothing # gets triggered via notifications if another cookbook installs a ruby
+  subscribes :create, resources("ohai[reload]"), :immediately
 end
 
 apache_module "passenger" do
