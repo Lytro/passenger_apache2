@@ -33,8 +33,24 @@ else
   raise "Unsupported passenger installation method requested: #{node[:passenger][:install_method]}. Supported: source or package."
 end
 
-if(node[:passenger][:manage_module_conf])
+if node[:passenger][:manage_module_conf]
   include_recipe 'passenger_apache2::mod_rails'
+end
+
+template "#{node['apache']['dir']}/ports.conf" do
+  source "ports.conf.erb"
+  owner "root"
+  group node['apache']['root_group']
+  mode 00644
+  notifies :restart, "service[apache2]"
+end
+
+ruby_block "reload_ruby" do
+  block do
+    node.load_attribute_by_short_filename('default', 'passenger_apache2')
+  end
+
+  action :nothing # gets triggered via notifications if another cookbook installs a ruby
 end
 
 apache_module "passenger" do
